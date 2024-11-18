@@ -48,33 +48,28 @@ jobs:
           echo "Files in 'images' directory:"
           ls -l images/  # Lists all files in the 'images' folder
 
-      # Step 6: Delete posted image
-      - name: Delete posted image from 'images' folder
+      # Step 6: Check and update log file with posted image
+      - name: Log posted image
         run: |
           IMAGE_PATH=$(python -c "import os, glob; print(os.path.abspath(next(iter(sorted(glob.glob('images/*.jpg'))))))")
-          echo "Image path: $IMAGE_PATH"  # Prints the absolute image path
+          LOG_FILE="posted_images.log"
           
-          # Delete the image
-          if [ -f "$IMAGE_PATH" ]; then
-            rm "$IMAGE_PATH"
-            echo "Deleted $IMAGE_PATH"
-          else
-            echo "Image not found: $IMAGE_PATH"
-            exit 1
-          fi
+          # Log the posted image
+          echo "Image posted: $IMAGE_PATH at $(date)" >> $LOG_FILE
+          echo "Logged posted image $IMAGE_PATH"
 
       # Step 7: Commit and push the changes to GitHub
-      - name: Commit and push the deleted image
+      - name: Commit and push the updated log file
         run: |
           # Set the local Git user information for this repository
           git config --global user.name "utjecajnik"
           git config --global user.email "utjecajnik@gmail.com"
           
-          # Stage all changes (including deleted files)
-          git add -A
+          # Stage the log file change
+          git add posted_images.log
           
           # Commit the changes with a message
-          git commit -m "Delete posted image"
+          git commit -m "Update log file with posted image"
           
           # Push the commit to GitHub using the GitHub token for authentication
           git push https://github-actions[bot]:${{ secrets.GH_TOKEN }}@github.com/utjecajnik/bskyutj.git HEAD:main || echo "No changes to push"
