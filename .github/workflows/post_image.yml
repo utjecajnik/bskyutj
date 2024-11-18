@@ -67,8 +67,8 @@ jobs:
       - name: Commit and push the deleted image
         run: |
           # Set the local Git user information for this repository
-          git config --local user.name "utjecajnik"
-          git config --local user.email "utjecajnik@gmail.com"
+          git config --global user.name "utjecajnik"
+          git config --global user.email "utjecajnik@gmail.com"
           
           # Stage all changes (including deleted files)
           git add -A
