@@ -33,9 +33,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # Step 4: Ensure folder permissions
-      - name: Set folder permissions
-        run: chmod -R 755 images
+      # Step 4: Set up Git identity for the Actions bot
+      - name: Set up Git identity
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
       # Step 5: Run the bot script
       - name: Run Bluesky bot
