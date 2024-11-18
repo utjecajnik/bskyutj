@@ -1,0 +1,41 @@
+name: Post Image to Bluesky
+
+on:
+  schedule:
+    # Run at 7:00 and 17:00 UTC every day
+    - cron: "0 7 * * *"
+    - cron: "0 17 * * *"
+
+  workflow_dispatch: # Allow manual triggering from GitHub
+    inputs:
+      run_reason:
+        description: 'Reason for manual run'
+        required: false
+
+jobs:
+  post_image:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Check out the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # Step 4: Run the bot script
+      - name: Run Bluesky bot
+        env:
+          BLUESKY_USERNAME: ${{ secrets.BLUESKY_USERNAME }}
+          BLUESKY_PASSWORD: ${{ secrets.BLUESKY_PASSWORD }}
+        run: python bot.py

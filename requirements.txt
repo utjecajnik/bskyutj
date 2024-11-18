@@ -1,0 +1,2 @@
+atproto==0.0.55  # Replace with the correct version for Bluesky's library
+python-dotenv==1.0.0  # To load environment variables from .env
