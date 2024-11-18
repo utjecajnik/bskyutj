@@ -1,6 +1,6 @@
 import os
 import glob
-from atproto import Client  # Corrected import
+from atproto import Client
 from dotenv import load_dotenv
 from datetime import datetime
 
@@ -41,13 +41,9 @@ def post_to_bluesky():
         with open(image_path, "rb") as img:
             image_data = img.read()
 
-        # Upload the image
-        uploaded_image = client.upload_image(image_data)
-
-        # Create the post
-        client.post(text=post_text, embed=uploaded_image)  # Assuming `embed` is correct for adding images
-
-        print(f"Posted: {image_path} at {datetime.now()}")
+        # Post the image and text
+        client.send_image(text=post_text, image=image_data, image_alt="Posted image")
+        print(f"Successfully posted: {image_path} at {datetime.now()}")
 
     except Exception as e:
         print(f"Error while posting: {e}")
