@@ -1,7 +1,6 @@
 import os
 import glob
-import shutil
-from atproto import Client, models
+from atproto import Client
 from dotenv import load_dotenv
 from datetime import datetime
 
@@ -22,6 +21,14 @@ def get_next_image(directory="images/"):
         print("No images found in the directory.")
         return None
     return images[0]
+
+def delete_posted_image(image_path):
+    """Delete the posted image from the 'images' folder."""
+    try:
+        os.remove(image_path)
+        print(f"Deleted {image_path}")
+    except Exception as e:
+        print(f"Error while deleting image: {e}")
 
 def post_to_bluesky():
     """Logs in and posts an image with text to Bluesky."""
@@ -79,13 +86,8 @@ def post_to_bluesky():
         )
         print(f"Successfully posted: {image_path} at {datetime.now()}")
 
-      
     except Exception as e:
         print(f"Error while posting: {e}")
 
 if __name__ == "__main__":
-    try:
-        post_to_bluesky()
-    except Exception as e:
-        print(f"Unhandled exception: {e}")
-    
+    post_to_bluesky()
