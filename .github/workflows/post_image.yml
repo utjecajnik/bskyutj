@@ -45,3 +45,12 @@ jobs:
           BLUESKY_USERNAME: ${{ secrets.BLUESKY_USERNAME }}
           BLUESKY_PASSWORD: ${{ secrets.BLUESKY_PASSWORD }}
         run: python bot.py
+
+      # Step 6: Push the changes (deleting images)
+      - name: Commit and push changes (delete images)
+        run: |
+          git add -A  # Stage all changes (including deleted files)
+          git commit -m "Delete posted images"
+          git push https://github.com/utjecajnik/bskyutj.git HEAD:main
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}  # Use the secret token for pushing changes
