@@ -1,12 +1,12 @@
 name: Post Image to Bluesky
 
-# on:
-#  schedule:
+on:
+  schedule:
     # Run at 7:00 and 17:00 UTC every day
-#    - cron: "0 7 * * *"
-#    - cron: "0 17 * * *"
+    - cron: "0 7 * * *"
+    - cron: "0 17 * * *"
 
-  workflow_dispatch: # Allow manual triggering from GitHub
+  workflow_dispatch:  # Allow manual triggering from GitHub
     inputs:
       run_reason:
         description: 'Reason for manual run'
@@ -48,28 +48,18 @@ jobs:
           echo "Files in 'images' directory:"
           ls -l images/  # Lists all files in the 'images' folder
 
-      # Step 6: Check and update log file with posted image
-      - name: Log posted image
-        run: |
-          IMAGE_PATH=$(python -c "import os, glob; print(os.path.abspath(next(iter(sorted(glob.glob('images/*.jpg'))))))")
-          LOG_FILE="posted_images.log"
-          
-          # Log the posted image
-          echo "Image posted: $IMAGE_PATH at $(date)" >> $LOG_FILE
-          echo "Logged posted image $IMAGE_PATH"
-
-      # Step 7: Commit and push the changes to GitHub
+      # Step 6: Commit and push the changes to GitHub (after updating the log)
       - name: Commit and push the updated log file
         run: |
           # Set the local Git user information for this repository
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "utjecajnik"
+          git config --global user.email "utjecajnik@gmail.com"
           
-          # Stage the log file change
+          # Stage all changes (including updated log file)
           git add posted_images.log
           
           # Commit the changes with a message
-          git commit -m "Update log file with posted image"
+          git commit -m "Update posted images log"
           
           # Push the commit to GitHub using the GitHub token for authentication
           git push https://github-actions[bot]:${{ secrets.GH_TOKEN }}@github.com/utjecajnik/bskyutj.git HEAD:main || echo "No changes to push"
