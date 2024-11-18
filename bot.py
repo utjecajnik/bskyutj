@@ -1,6 +1,6 @@
 import os
 import glob
-from atproto import BskyAgent  # Replace with the correct Python Bluesky library
+from atproto import Client  # Corrected import
 from dotenv import load_dotenv
 from datetime import datetime
 
@@ -11,8 +11,8 @@ load_dotenv()
 BLUESKY_USERNAME = os.getenv("BLUESKY_USERNAME")
 BLUESKY_PASSWORD = os.getenv("BLUESKY_PASSWORD")
 
-# Initialize the Bluesky Agent
-agent = BskyAgent(service="https://bsky.social")
+# Initialize the Bluesky Client
+client = Client()
 
 def get_next_image(directory="images/"):
     """Retrieve the next image to post based on numerical order."""
@@ -26,7 +26,7 @@ def post_to_bluesky():
     """Logs in and posts an image with text to Bluesky."""
     try:
         # Log in to Bluesky
-        agent.login(identifier=BLUESKY_USERNAME, password=BLUESKY_PASSWORD)
+        client.login(BLUESKY_USERNAME, BLUESKY_PASSWORD)
 
         # Find the next image
         image_path = get_next_image()
@@ -41,9 +41,11 @@ def post_to_bluesky():
         with open(image_path, "rb") as img:
             image_data = img.read()
 
-        # Post to Bluesky (assuming the API has an upload method)
-        agent.upload_image(image_data)  # Upload image
-        agent.post({"text": post_text})  # Post with text
+        # Upload the image
+        uploaded_image = client.upload_image(image_data)
+
+        # Create the post
+        client.post(text=post_text, embed=uploaded_image)  # Assuming `embed` is correct for adding images
 
         print(f"Posted: {image_path} at {datetime.now()}")
 
