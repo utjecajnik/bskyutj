@@ -1,5 +1,6 @@
 import os
 import glob
+import shutil
 from atproto import Client
 from dotenv import load_dotenv
 from datetime import datetime
@@ -22,6 +23,12 @@ def get_next_image(directory="images/"):
         return None
     return images[0]
 
+def move_posted_image(image_path, posted_dir="posted/"):
+    """Move the posted image to a 'posted' folder."""
+    os.makedirs(posted_dir, exist_ok=True)  # Ensure the 'posted' folder exists
+    shutil.move(image_path, os.path.join(posted_dir, os.path.basename(image_path)))
+    print(f"Moved {image_path} to {posted_dir}")
+
 def post_to_bluesky():
     """Logs in and posts an image with text to Bluesky."""
     try:
@@ -42,8 +49,11 @@ def post_to_bluesky():
             image_data = img.read()
 
         # Post the image and text
-        client.send_image(text=post_text, image=image_data, image_alt="Posted image")
+        client.send_image(text=post_text, image=image_data, image_alt="@utjecajnik best of")
         print(f"Successfully posted: {image_path} at {datetime.now()}")
+
+        # Move the posted image to the 'posted' folder
+        move_posted_image(image_path)
 
     except Exception as e:
         print(f"Error while posting: {e}")
