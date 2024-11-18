@@ -66,14 +66,15 @@ jobs:
       # Step 7: Commit and push the changes to GitHub
       - name: Commit and push the deleted image
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          # Set the local Git user information for this repository
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
           
           # Stage all changes (including deleted files)
-          git add -A  
+          git add -A
           
           # Commit the changes with a message
           git commit -m "Delete posted image"
           
-          # Push the commit to GitHub
+          # Push the commit to GitHub using the GitHub token for authentication
           git push https://github-actions[bot]:${{ secrets.GH_TOKEN }}@github.com/utjecajnik/bskyutj.git HEAD:main || echo "No changes to push"
