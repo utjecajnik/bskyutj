@@ -43,3 +43,13 @@ jobs:
           BLUESKY_USERNAME: ${{ secrets.BLUESKY_USERNAME }}
           BLUESKY_PASSWORD: ${{ secrets.BLUESKY_PASSWORD }}
         run: python bot.py
+
+      # Step 6: Move posted image to 'posted/' folder
+      - name: Move image to 'posted/' folder
+        run: |
+          IMAGE_PATH=$(python -c "import os; print(os.path.abspath(next(iter(sorted(glob.glob('images/*.jpg'))))))")
+          POSTED_DIR='posted'
+          mkdir -p $POSTED_DIR
+          mv $IMAGE_PATH $POSTED_DIR/
+          echo "Moved $IMAGE_PATH to $POSTED_DIR"
+
