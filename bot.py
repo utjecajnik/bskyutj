@@ -1,6 +1,6 @@
 import os
 import glob
-from atproto import Client
+from atproto import Client, models
 from dotenv import load_dotenv
 from datetime import datetime
 
