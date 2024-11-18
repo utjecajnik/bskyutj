@@ -1,7 +1,7 @@
 import os
 import glob
 import shutil
-from atproto import Client
+from atproto import Client, models
 from dotenv import load_dotenv
 from datetime import datetime
 
@@ -43,13 +43,46 @@ def post_to_bluesky():
 
         # Prepare the post text
         post_text = "#hrvatibezkonteksta"
+        hashtag_length = len(post_text)
+
+        # Create a hashtag facet
+        facets = [
+            {
+                "index": {
+                    "byteStart": 0,  # Start of the hashtag
+                    "byteEnd": hashtag_length  # End of the hashtag
+                },
+                "features": [
+                    {
+                        "$type": "app.bsky.richtext.facet#tag",
+                        "tag": "hrvatibezkonteksta"
+                    }
+                ]
+            }
+        ]
 
         # Read image data
         with open(image_path, "rb") as img:
             image_data = img.read()
 
-        # Post the image and text
-        client.send_image(text=post_text, image=image_data, image_alt="@utjecajnik best of")
+        # Upload the image
+        upload = client.upload_blob(image_data)
+        images = [models.AppBskyEmbedImages.Image(alt="@utjecajnik best of", image=upload.blob)]
+        embed = models.AppBskyEmbedImages.Main(images=images)
+
+        # Create the post with rich text facets
+        client.com.atproto.repo.create_record(
+            models.ComAtprotoRepoCreateRecord.Data(
+                repo=client.me.did,
+                collection=models.ids.AppBskyFeedPost,
+                record=models.AppBskyFeedPost.Record(
+                    text=post_text,
+                    facets=facets,
+                    embed=embed,
+                    created_at=client.get_current_time_iso(),
+                ),
+            )
+        )
         print(f"Successfully posted: {image_path} at {datetime.now()}")
 
         # Move the posted image to the 'posted' folder
