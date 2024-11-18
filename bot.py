@@ -23,16 +23,6 @@ def get_next_image(directory="images/"):
         return None
     return images[0]
 
-def move_posted_image(image_path, posted_dir="posted/"):
-    """Move the posted image to a 'posted' folder."""
-    try:
-        os.makedirs(posted_dir, exist_ok=True)  # Ensure the 'posted' folder exists
-        new_path = os.path.join(posted_dir, os.path.basename(image_path))
-        shutil.move(image_path, new_path)
-        print(f"Moved {image_path} to {new_path}")
-    except Exception as e:
-        print(f"Error moving {image_path} to {posted_dir}: {e}")
-
 def post_to_bluesky():
     """Logs in and posts an image with text to Bluesky."""
     try:
@@ -89,9 +79,7 @@ def post_to_bluesky():
         )
         print(f"Successfully posted: {image_path} at {datetime.now()}")
 
-        # Move the posted image to the 'posted' folder
-        move_posted_image(image_path)
-
+      
     except Exception as e:
         print(f"Error while posting: {e}")
 
