@@ -23,12 +23,21 @@ def get_next_image(directory="images/"):
     return images[0]
 
 def delete_posted_image(image_path):
-    """Delete the posted image from the 'images' folder."""
+    """Delete the posted image from the 'images' folder and commit the change to GitHub."""
     try:
+        # Delete the image locally
         os.remove(image_path)
         print(f"Deleted {image_path}")
+        
+        # Commit the change to GitHub (delete the image from repo)
+        subprocess.run(["git", "config", "--global", "user.name", "github-actions[bot]"], check=True)
+        subprocess.run(["git", "config", "--global", "user.email", "github-actions[bot]@users.noreply.github.com"], check=True)
+        subprocess.run(["git", "add", "-A"], check=True)  # Add changes (deleted file)
+        subprocess.run(["git", "commit", "-m", f"Delete posted image {os.path.basename(image_path)}"], check=True)
+        subprocess.run(["git", "push"], check=True)
+        print("Committed and pushed the change to GitHub.")
     except Exception as e:
-        print(f"Error while deleting image: {e}")
+        print(f"Error deleting the image: {e}")
 
 def post_to_bluesky():
     """Logs in and posts an image with text to Bluesky."""
