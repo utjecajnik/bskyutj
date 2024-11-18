@@ -15,6 +15,8 @@ BLUESKY_PASSWORD = os.getenv("BLUESKY_PASSWORD")
 # Initialize the Bluesky Client
 client = Client()
 
+LOG_FILE = "posted_images.log"  # Log file to track posted images
+
 def get_next_image(directory="images/"):
     """Retrieve the next image to post based on numerical order."""
     images = sorted(glob.glob(f"{directory}/*.jpg"))
@@ -23,31 +25,25 @@ def get_next_image(directory="images/"):
         return None
     return images[0]
 
-def delete_posted_image(image_path):
-    """Delete the posted image from the 'images' folder and commit the change to GitHub."""
+def log_posted_image(image_path):
+    """Log the posted image to the log file."""
     try:
-        # Delete the image locally
-        os.remove(image_path)
-        print(f"Deleted {image_path}")
-
-        # Check the status of the git repository
-        subprocess.run(["git", "status"], check=True)
-
-        # Stage the deletion
-        subprocess.run(["git", "add", "-A"], check=True)
-        
-        # Check the status after adding the changes
-        subprocess.run(["git", "status"], check=True)
-
-        # Commit the change to GitHub (delete the image from repo)
-        commit_message = f"Delete posted image {os.path.basename(image_path)}"
-        subprocess.run(["git", "commit", "-m", commit_message], check=True)
-
-        # Push the change to GitHub
-        subprocess.run(["git", "push"], check=True)
-        print("Committed and pushed the change to GitHub.")
+        # Write the image path to the log file
+        with open(LOG_FILE, "a") as log:
+            log.write(f"{image_path}\n")
+        print(f"Logged posted image: {image_path}")
     except Exception as e:
-        print(f"Error deleting the image: {e}")
+        print(f"Error logging posted image: {e}")
+
+def is_image_posted(image_path):
+    """Check if the image has already been posted (exists in the log file)."""
+    try:
+        with open(LOG_FILE, "r") as log:
+            logged_images = log.readlines()
+        logged_images = [line.strip() for line in logged_images]
+        return image_path in logged_images
+    except FileNotFoundError:
+        return False
 
 def post_to_bluesky():
     """Logs in and posts an image with text to Bluesky."""
@@ -59,6 +55,11 @@ def post_to_bluesky():
         image_path = get_next_image()
         if not image_path:
             print("No images to post. Exiting.")
+            return
+
+        # Check if the image has already been posted
+        if is_image_posted(image_path):
+            print(f"Image {image_path} has already been posted.")
             return
 
         # Prepare the post text
@@ -104,9 +105,9 @@ def post_to_bluesky():
             )
         )
         print(f"Successfully posted: {image_path} at {datetime.now()}")
-	
-	# Delete the posted image from the 'images' folder and commit the change to GitHub
-        delete_posted_image(image_path)
+        
+        # Log the posted image
+        log_posted_image(image_path)
 
     except Exception as e:
         print(f"Error while posting: {e}")
