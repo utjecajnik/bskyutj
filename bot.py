@@ -28,12 +28,21 @@ def delete_posted_image(image_path):
         # Delete the image locally
         os.remove(image_path)
         print(f"Deleted {image_path}")
+
+        # Check the status of the git repository
+        subprocess.run(["git", "status"], check=True)
+
+        # Stage the deletion
+        subprocess.run(["git", "add", "-A"], check=True)
         
+        # Check the status after adding the changes
+        subprocess.run(["git", "status"], check=True)
+
         # Commit the change to GitHub (delete the image from repo)
-        subprocess.run(["git", "config", "--global", "user.name", "github-actions[bot]"], check=True)
-        subprocess.run(["git", "config", "--global", "user.email", "github-actions[bot]@users.noreply.github.com"], check=True)
-        subprocess.run(["git", "add", "-A"], check=True)  # Add changes (deleted file)
-        subprocess.run(["git", "commit", "-m", f"Delete posted image {os.path.basename(image_path)}"], check=True)
+        commit_message = f"Delete posted image {os.path.basename(image_path)}"
+        subprocess.run(["git", "commit", "-m", commit_message], check=True)
+
+        # Push the change to GitHub
         subprocess.run(["git", "push"], check=True)
         print("Committed and pushed the change to GitHub.")
     except Exception as e:
