@@ -103,6 +103,9 @@ def post_to_bluesky():
             )
         )
         print(f"Successfully posted: {image_path} at {datetime.now()}")
+	
+	# Delete the posted image from the 'images' folder and commit the change to GitHub
+        delete_posted_image(image_path)
 
     except Exception as e:
         print(f"Error while posting: {e}")
