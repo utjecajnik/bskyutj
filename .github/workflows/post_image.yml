@@ -76,4 +76,4 @@ jobs:
           git commit -m "Delete posted image"
           
           # Push the commit to GitHub
-          git push https://github.com/utjecajnik/bskyutj.git HEAD:main || echo "No changes to push"
+          git push https://github-actions[bot]:${{ secrets.GH_TOKEN }}@github.com/utjecajnik/bskyutj.git HEAD:main || echo "No changes to push"
