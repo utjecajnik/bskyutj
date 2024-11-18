@@ -1,1 +1,1 @@
-Hrvati bez konteksta - best off - automatic posting on Bluesky
+Nothing special about this bot. It posts a new image on Bluesky twice a day. Feel free to use it. Don't abuse my image repo :)
