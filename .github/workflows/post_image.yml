@@ -45,11 +45,24 @@ jobs:
         run: python bot.py
 
       # Step 6: Move posted image to 'posted/' folder
-      - name: Move image to 'posted/' folder
+      - name: Debug move image
         run: |
+          echo "Current working directory:"
+          pwd  # Prints the current working directory
+          echo "Files in 'images' directory:"
+          ls -l images/  # Lists all files in the 'images' folder
+          
           IMAGE_PATH=$(python -c "import os, glob; print(os.path.abspath(next(iter(sorted(glob.glob('images/*.jpg'))))))")
+          echo "Image path: $IMAGE_PATH"  # Prints the absolute image path
+          
           POSTED_DIR='posted'
           mkdir -p $POSTED_DIR
-          mv $IMAGE_PATH $POSTED_DIR/
-          echo "Moved $IMAGE_PATH to $POSTED_DIR"
+          
+          # Check if image exists before attempting to move it
+          if [ -f "$IMAGE_PATH" ]; then
+            mv $IMAGE_PATH $POSTED_DIR/
+            echo "Moved $IMAGE_PATH to $POSTED_DIR"
+          else
+            echo "Image not found: $IMAGE_PATH"
+          fi
 
