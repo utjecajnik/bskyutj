@@ -18,12 +18,18 @@ client = Client()
 LOG_FILE = "posted_images.log"  # Log file to track posted images
 
 def get_next_image(directory="images/"):
-    """Retrieve the next image to post based on numerical order."""
+    """Retrieve the next unposted image to post based on numerical order."""
     images = sorted(glob.glob(f"{directory}/*.jpg"))
     if not images:
         print("No images found in the directory.")
         return None
-    return images[0]
+
+    for image in images:
+        if not is_image_posted(image):
+            return image
+
+    print("All images in the directory have already been posted.")
+    return None
 
 def log_posted_image(image_path):
     """Log the posted image to the log file."""
