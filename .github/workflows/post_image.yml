@@ -52,8 +52,8 @@ jobs:
       - name: Commit and push the updated log file
         run: |
           # Set the local Git user information for this repository
-          git config --global user.name "utjecajnik"
-          git config --global user.email "utjecajnik@gmail.com"
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
           
           # Stage all changes (including updated log file)
           git add posted_images.log
